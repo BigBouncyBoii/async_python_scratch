@@ -21,3 +21,17 @@ Future completes
 schedule task.step again
    ↓
 repeat
+
+
+yield
+runs inside the generator
+pauses execution
+returns a value outward to the caller
+
+send()
+runs outside the generator
+resumes execution
+injects a value into the paused yield
+
+
+in that since generator = coroutine 
