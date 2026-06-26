@@ -15,11 +15,12 @@ class Task:
       res = self.coro.send(value)
       if isinstance(res, Future):
         res.add_done_callback(self._wakeup)
+        return
     except StopIteration as e:
       self._done = True
       self._result = e.value
-      for cb in callbacks:
-        self.callbacks.append(cb)
+      for cb in self.callbacks:
+        cb(self)
 
   def done(self) -> bool:
     return self._done
@@ -28,7 +29,7 @@ class Task:
     return self._result
   
   def add_done_callback(self, cb):
-    if task.done():
+    if self.done():
       cb(self)
     else:
       self.callbacks.append(cb)
