@@ -18,7 +18,7 @@ class EventLoop:
 
   def create_task(self, coro):
     task = Task(coro, self)
-    self._ready.append(task.step, ())
+    self._ready.append((task.step, ())) #this is a function task.step 
     return task
 
   def run_forever(self):
