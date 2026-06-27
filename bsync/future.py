@@ -12,13 +12,13 @@ class Future:
     self.result: Any = None
     self.callbacks: List[Callable] = []
   
-  def done(self):
+  def done(self) -> bool:
     return self.status == Status.FINISHED
   
   def get_result(self) -> Any:
     return self.result
 
-  def set_result(self, result) -> void:
+  def set_result(self, result: Any):
     if self.done():
       return
     else:
@@ -27,7 +27,7 @@ class Future:
       for cb in self.callbacks:
         cb(self)
 
-  def add_done_callback(self, cb) -> void:
+  def add_done_callback(self, cb: Callable):
     if self.done():
       cb(self)
     else:

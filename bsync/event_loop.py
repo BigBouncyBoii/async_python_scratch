@@ -1,6 +1,8 @@
 from collections import deque
 import heapq
 import time
+from typing import Callable
+from task import Task
 
 class EventLoop:
   
@@ -9,14 +11,14 @@ class EventLoop:
     self._timers = []
     self._running = False
   
-  def call_soon(self, callback, *args):
+  def call_soon(self, callback: Callable, *args):
     self._ready.append((callback, args))
 
-  def call_later(self, delay, callback, *args):
+  def call_later(self, delay: int, callback: Callable, *args):
     curr = time.time()
     heapq.heappush(self._timers, (curr+delay, callback, args))
 
-  def create_task(self, coro):
+  def create_task(self, coro: Callable) -> Task:
     task = Task(coro, self)
     self._ready.append((task.step, ())) #this is a function task.step 
     return task

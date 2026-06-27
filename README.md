@@ -35,3 +35,6 @@ injects a value into the paused yield
 
 
 in that since generator = coroutine 
+yield pauses the coroutine/generator
+
+

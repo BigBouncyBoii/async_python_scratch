@@ -1,13 +1,14 @@
 from event_loop import EventLoop
 from task import Task
 from future import Future
+from typing import Callable
 
 loop = EventLoop()
 
 def _get_loop() -> EventLoop:
   return _loop
 
-def run(coro) -> Any:
+def run(coro: Callable) -> Any:
   loop = _get_loop()
   task = loop.create_task(coro)
   task.add_done_callback(lambda t: loop.stop())
@@ -15,16 +16,16 @@ def run(coro) -> Any:
   return task.result()
 
 
-def create_task(coro) -> Task:
+def create_task(coro: Callable) -> Task:
   loop = _get_loop()
   task = loop.create_task(coro)
   return task
 
-def sleep(delay):
+def sleep(delay: int) -> Future:
   loop = _get_loop()
   future = Future()
   loop.call_later(delay, lambda: future.set_result(None))
-  return fut
+  return future
 
 def gather(*coros):
   results = [None] * len(coros)
