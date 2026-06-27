@@ -1,9 +1,9 @@
 
 from future import Future
-from typing import Any
+from typing import Any, Callable
 
 class Task:
-  def __init__(self, coro, loop):
+  def __init__(self, coro: Callable, loop: EventLoop):
     self.loop = loop
     self.coro = coro
     self.callbacks = []
@@ -15,6 +15,12 @@ class Task:
       res = self.coro.send(value)
       if isinstance(res, Future):
         res.add_done_callback(self._wakeup)
+        return
+      elif isinstance(res, Task):
+        if res.done():
+          self.loop.call_soon(self.step, res.result())
+        else:
+          res.add_done_callback(self._wakeup)
         return
     except StopIteration as e:
       self._done = True
@@ -28,11 +34,11 @@ class Task:
   def result(self) -> Any:
     return self._result
   
-  def add_done_callback(self, cb):
+  def add_done_callback(self, cb: Callable):
     if self.done():
       cb(self)
     else:
       self.callbacks.append(cb)
   
-  def _wakeup(self, future):
+  def _wakeup(self, future: Future):
     self.loop.call_soon(self.step, future.get_result())
